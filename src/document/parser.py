@@ -10,6 +10,10 @@ def parse_text(file_path: str) -> List[Dict]:
     try:
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
             text = f.read()
+        logger.info(f"Parsed text file: {len(text)} characters")
+        if not text.strip():
+            logger.warning(f"Text file is empty: {file_path}")
+            return []
         return [{"page_num": 1, "text": text, "source": Path(file_path).name}]
     except Exception as e:
         logger.error(f"Error parsing text file {file_path}: {e}")

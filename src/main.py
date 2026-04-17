@@ -84,13 +84,18 @@ async def ingest_document(file: UploadFile = File(...)):
             content = await file.read()
             tmp_file.write(content)
             tmp_file.flush()
+            os.fsync(tmp_file.fileno())  # Ensure file is written to disk
             tmp_path = tmp_file.name
         
+        # File context closes here - ensure it's fully written
         # Load and process document
         result = document_loader.load_document(tmp_path)
         
         # Clean up
-        os.remove(tmp_path)
+        try:
+            os.remove(tmp_path)
+        except:
+            pass  # File might already be deleted
         
         return JSONResponse(content=result)
     except Exception as e:

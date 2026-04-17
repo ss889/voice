@@ -21,7 +21,10 @@ def chunk_text(text: str, metadata: Dict, chunk_size: int = 512, chunk_overlap: 
     chunk_index = 0
     
     if not text or not text.strip():
+        logger.warning(f"Empty text provided to chunker")
         return chunks
+    
+    logger.info(f"Chunking text: {len(text)} characters into chunks of {chunk_size}")
     
     while start < len(text):
         end = min(start + chunk_size, len(text))
@@ -46,6 +49,8 @@ def chunk_text(text: str, metadata: Dict, chunk_size: int = 512, chunk_overlap: 
         
         # Move start position, accounting for overlap
         start = end - chunk_overlap if end < len(text) else len(text)
+    
+    logger.info(f"Created {len(chunks)} chunks from text")
     
     # Add total_chunks metadata to all chunks
     total_chunks = len(chunks)
