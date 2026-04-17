@@ -1,0 +1,27 @@
+Vector Databases: A Primer
+
+Vector databases are specialized database systems designed to store and search high-dimensional vectors efficiently. Unlike traditional databases that search for exact matches, vector databases enable semantic search - finding items that are similar in meaning.
+
+Key Concepts:
+
+Embeddings are numerical representations of data (text, images, audio) in a high-dimensional space. Similar items have vectors that are close together in this space.
+
+Similarity Search uses distance metrics like cosine similarity or Euclidean distance to find vectors that are close to a query vector.
+
+Approximate Nearest Neighbor (ANN) algorithms trade a small amount of accuracy for massive speed improvements. HNSW (Hierarchical Navigable Small World) is the most popular ANN algorithm.
+
+Popular Vector Databases:
+
+Qdrant is an open-source vector database written in Rust. It offers high performance, flexible filtering, and runs easily via Docker.
+
+Pinecone is a managed vector database service. It's easy to use but more expensive than self-hosted options.
+
+Weaviate is another open-source option with GraphQL interface and modular AI integrations.
+
+Use Cases:
+
+RAG (Retrieval-Augmented Generation) systems use vector databases to find relevant context for LLM queries.
+
+Recommendation engines find similar items based on user preferences.
+
+Image search finds visually similar images using image embeddings.

@@ -1,0 +1,37 @@
+Building Production RAG Systems
+
+Retrieval-Augmented Generation (RAG) combines the power of large language models with external knowledge retrieval. This approach grounds LLM responses in factual information, reducing hallucinations.
+
+The RAG Pipeline:
+
+1. Document Processing: Parse documents, extract text, handle various formats (PDF, HTML, text).
+
+2. Chunking: Split documents into smaller pieces. Chunk size matters - too small loses context, too large dilutes relevance.
+
+3. Embedding: Convert chunks to vector representations using embedding models like OpenAI's text-embedding-3-small.
+
+4. Vector Storage: Store embeddings in a vector database for efficient similarity search.
+
+5. Retrieval: For a query, find the most relevant chunks using vector similarity.
+
+6. Generation: Feed retrieved context to an LLM along with the query to generate a grounded response.
+
+Key Challenges:
+
+Chunking Strategy: Finding the right chunk size and overlap is critical. Semantic chunking that respects sentence boundaries performs better than fixed-size chunks.
+
+Retrieval Quality: Not all retrieved chunks are relevant. Evaluation frameworks help measure and improve retrieval accuracy.
+
+Context Window: LLMs have limited context windows. You can't feed all retrieved chunks - you need to select the most relevant ones.
+
+Evaluation: Measuring RAG system quality requires metrics beyond simple accuracy. Context relevance, answer faithfulness, and answer relevance are key metrics.
+
+Best Practices:
+
+Use the same embedding model for documents and queries. Mixing models breaks retrieval.
+
+Implement evaluation early. You need to know if your changes improve or hurt performance.
+
+Monitor retrieval latency in production. Users expect fast responses.
+
+Include source attribution. Users should know where information comes from.

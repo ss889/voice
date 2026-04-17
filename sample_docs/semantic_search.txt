@@ -1,0 +1,29 @@
+Semantic Search Fundamentals
+
+Semantic search goes beyond keyword matching to understand the meaning of queries and content. Instead of looking for exact word matches, semantic search finds conceptually similar information.
+
+How Semantic Search Works:
+
+Text Embeddings transform documents and queries into numerical vectors. These vectors capture semantic meaning in a high-dimensional space, typically 300-1536 dimensions.
+
+Distance Metrics measure similarity between vectors. The most common metrics are:
+- Cosine similarity: measures angle between vectors (0 to 1 range)
+- Euclidean distance: measures straight-line distance between points
+- Dot product: measure alignment of vectors
+
+Approximate Nearest Neighbor Search efficiently finds similar vectors without comparing to all vectors. This is critical for scalability.
+
+Applications of Semantic Search:
+
+E-commerce: Find products similar to items user has viewed
+Document search: Find relevant documents from large repositories
+Code search: Find similar code snippets
+Recommendation systems: Recommend content similar to user preferences
+Question answering: Find relevant passages to answer questions
+
+Advantages Over Keyword Search:
+
+Semantic search handles synonyms automatically - "vehicle" and "car" are semantically similar
+Misspellings and typos matter less - "embarrasment" might match "embarrassment"
+Context matters - the same word can mean different things in different contexts
+Natural language queries work - you can search using complete sentences
