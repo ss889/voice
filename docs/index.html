@@ -11,6 +11,620 @@
             box-sizing: border-box;
         }
         
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+        
+        /* Navbar */
+        nav {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f0f6fc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        nav .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            padding: 6px 12px;
+            background: rgba(79, 195, 247, 0.1);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            border-radius: 6px;
+            color: #4fc3f7;
+        }
+        
+        nav .status.connected::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #3fb950;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #8b949e;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .tab-btn:hover {
+            color: #c9d1d9;
+        }
+        
+        .tab-btn.active {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content h2 {
+            font-size: 28px;
+            color: #f0f6fc;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+        
+        /* Form */
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #c9d1d9;
+            margin-bottom: 8px;
+        }
+        
+        input[type="file"],
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #c9d1d9;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        
+        input[type="file"]::file-selector-button {
+            background: #238636;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 12px;
+            transition: background 0.2s ease;
+        }
+        
+        input[type="file"]::file-selector-button:hover {
+            background: #2ea043;
+        }
+        
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        /* Buttons */
+        .btn {
+            background: #238636;
+            color: #ffffff;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin-top: 16px;
+        }
+        
+        .btn:hover {
+            background: #2ea043;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 160, 67, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn.secondary {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+        
+        .btn.secondary:hover {
+            background: #30363d;
+            box-shadow: none;
+        }
+        
+        /* Alerts */
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 13px;
+            border-left: 4px solid;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .alert.success {
+            background: rgba(63, 185, 80, 0.1);
+            border-color: #3fb950;
+            color: #3fb950;
+        }
+        
+        .alert.error {
+            background: rgba(248, 81, 73, 0.1);
+            border-color: #f85149;
+            color: #f85149;
+        }
+        
+        .alert.info {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+        
+        /* Results */
+        .results-container {
+            margin-top: 24px;
+        }
+        
+        .result-item {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .result-item:hover {
+            background: #1c2128;
+            border-color: #58a6ff;
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.1);
+        }
+        
+        .result-score {
+            display: inline-block;
+            background: #238636;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .result-text {
+            color: #c9d1d9;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        .result-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #8b949e;
+        }
+        
+        .result-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .stat-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #58a6ff;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #8b949e;
+        }
+        
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(88, 166, 255, 0.2);
+            border-top-color: #58a6ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 12px 16px;
+            }
+            
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .tab-content h2 {
+                font-size: 24px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">📚 Document Intelligence</div>
+        <div class="status connected" id="statusBadge">✓ Connected</div>
+    </nav>
+    
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('upload')">📤 Upload</button>
+            <button class="tab-btn" onclick="switchTab('search')">🔍 Search</button>
+            <button class="tab-btn" onclick="switchTab('stats')">📊 Stats</button>
+        </div>
+        
+        <!-- Upload Tab -->
+        <div id="upload" class="tab-content active">
+            <h2>Upload Document</h2>
+            <p style="color: #8b949e; margin-bottom: 24px; font-size: 14px;">Upload a PDF or TXT file to add it to your document collection</p>
+            
+            <div class="form-group">
+                <label for="file">Select File</label>
+                <input type="file" id="file" accept=".pdf,.txt">
+            </div>
+            
+            <button class="btn" onclick="uploadFile()">Upload & Ingest</button>
+            <div id="uploadStatus"></div>
+        </div>
+        
+        <!-- Search Tab -->
+        <div id="search" class="tab-content">
+            <h2>Search Documents</h2>
+            <p style="color: #8b949e; margin-bottom: 24px; font-size: 14px;">Ask a question about your uploaded documents</p>
+            
+            <div class="form-group">
+                <label for="query">Your Question</label>
+                <textarea id="query" placeholder="What would you like to know about your documents?"></textarea>
+            </div>
+            
+            <button class="btn" onclick="searchDocuments()">Search</button>
+            <div id="searchStatus"></div>
+            <div id="searchResults" class="results-container"></div>
+        </div>
+        
+        <!-- Stats Tab -->
+        <div id="stats" class="tab-content">
+            <h2>Collection Statistics</h2>
+            <p style="color: #8b949e; margin-bottom: 24px; font-size: 14px;">View and manage your document collection</p>
+            
+            <button class="btn" onclick="fetchStats()">Refresh Stats</button>
+            <div id="statsDisplay"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = localStorage.getItem('apiUrl') || 'https://voice-pba7.onrender.com';
+        
+        window.addEventListener('load', () => {
+            checkApiStatus();
+            setInterval(checkApiStatus, 30000);
+        });
+        
+        async function checkApiStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`, { headers: { 'Accept': 'application/json' } });
+                updateApiStatus(response.ok);
+            } catch (e) {
+                updateApiStatus(false);
+            }
+        }
+        
+        function updateApiStatus(connected) {
+            const badge = document.getElementById('statusBadge');
+            if (connected) {
+                badge.className = 'status connected';
+                badge.innerHTML = '✓ Connected';
+            } else {
+                badge.className = 'status';
+                badge.innerHTML = '✗ Disconnected';
+            }
+        }
+        
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        async function uploadFile() {
+            const file = document.getElementById('file').files[0];
+            if (!file) {
+                showAlert('uploadStatus', 'Please select a file', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                showAlert('uploadStatus', '<span class="loading"></span> Uploading...', 'info');
+                const response = await fetch(`${API_BASE_URL}/ingest`, { method: 'POST', body: formData });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('uploadStatus', `✓ Success! Ingested ${data.chunks_indexed} chunks from ${data.source}`, 'success');
+                    document.getElementById('file').value = '';
+                } else {
+                    showAlert('uploadStatus', `Error: ${data.detail || 'Upload failed'}`, 'error');
+                }
+            } catch (error) {
+                showAlert('uploadStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function searchDocuments() {
+            const query = document.getElementById('query').value;
+            if (!query.trim()) {
+                showAlert('searchStatus', 'Please enter a search query', 'error');
+                return;
+            }
+            
+            try {
+                showAlert('searchStatus', '<span class="loading"></span> Searching...', 'info');
+                const response = await fetch(`${API_BASE_URL}/query`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, k: 5 })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    displaySearchResults(data);
+                } else {
+                    showAlert('searchStatus', `Error: ${data.detail || 'Search failed'}`, 'error');
+                }
+            } catch (error) {
+                showAlert('searchStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function displaySearchResults(data) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!data.results || data.results.length === 0) {
+                resultsDiv.innerHTML = '<div class="alert info">No results found. Try uploading documents first.</div>';
+                return;
+            }
+            
+            let html = `<div class="alert success">✓ Found ${data.results.length} results in ${data.retrieval_time_ms}ms</div>`;
+            html += '<div>';
+            
+            data.results.forEach((result, idx) => {
+                const score = ((result.similarity || result.score || 0) * 100).toFixed(1);
+                html += `
+                    <div class="result-item">
+                        <span class="result-score">${score}% Match</span>
+                        <div class="result-text">${escapeHtml(result.text)}</div>
+                        <div class="result-meta">
+                            <span>📄 ${escapeHtml(result.source || 'Unknown')}</span>
+                            ${result.page_num ? `<span>📖 Page ${result.page_num}</span>` : ''}
+                            ${result.chunk_index !== undefined ? `<span>#${result.chunk_index}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+        
+        async function fetchStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/stats`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const html = `
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">${data.vectors_count || 0}</div>
+                                <div class="stat-label">Vectors Indexed</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.vector_size || 1536}</div>
+                                <div class="stat-label">Embedding Dimension</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.collection_name || 'documents'}</div>
+                                <div class="stat-label">Collection</div>
+                            </div>
+                        </div>
+                        <button class="btn secondary" onclick="clearCollection()">Clear All Documents</button>
+                    `;
+                    document.getElementById('statsDisplay').innerHTML = html;
+                } else {
+                    showAlert('statsDisplay', 'Error loading stats', 'error');
+                }
+            } catch (error) {
+                showAlert('statsDisplay', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function clearCollection() {
+            if (!confirm('⚠️ Are you sure? This will delete all documents and cannot be undone.')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/clear`, { method: 'DELETE' });
+                if (response.ok) {
+                    fetchStats();
+                    showAlert('statsDisplay', '✓ Collection cleared', 'success');
+                }
+            } catch (error) {
+                showAlert('statsDisplay', `Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function showAlert(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            if (message) {
+                el.innerHTML = `<div class="alert ${type}">${message}</div>`;
+            } else {
+                el.innerHTML = '';
+            }
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Intelligence - RAG Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         html {
             scroll-behavior: smooth;
         }
