@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import os
 import tempfile
 import logging
@@ -46,6 +47,15 @@ document_loader = DocumentLoader(vector_store) if vector_store else None
 rag_search = RAGSearch(vector_store, embeddings_module) if vector_store else None
 
 app = FastAPI(title="Document Intelligence Pipeline")
+
+# Enable CORS for GitHub Pages frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (frontend can be anywhere)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 async def health():
