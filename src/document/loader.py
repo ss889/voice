@@ -53,8 +53,12 @@ class DocumentLoader:
                 embeddings = embed_batch(chunk_texts, settings.EMBEDDING_MODEL)
                 logger.info(f"Got {len(embeddings) if embeddings else 0} embeddings")
                 
-                if not embeddings or len(embeddings) != len(chunks):
-                    logger.error(f"Embedding count mismatch for {source_name}: expected {len(chunks)}, got {len(embeddings) if embeddings else 0}")
+                if not embeddings or len(embeddings) == 0:
+                    logger.error(f"No embeddings generated for {source_name}")
+                    continue
+                    
+                if len(embeddings) != len(chunks):
+                    logger.error(f"Embedding count mismatch for {source_name}: expected {len(chunks)}, got {len(embeddings)}")
                     continue
                 
                 # Prepare payloads (without text for storage efficiency)
