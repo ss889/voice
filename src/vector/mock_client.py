@@ -64,7 +64,8 @@ class MockVectorStore:
                     payload = self.payloads[id]
                     results.append({
                         "text": payload.get("text", ""),
-                        "score": float(score),
+                        "similarity": float(score),  # Match frontend expectation
+                        "score": float(score),  # Also include for compatibility
                         "source": payload.get("source", ""),
                         "page_num": payload.get("page_num", 1),
                         "chunk_index": payload.get("chunk_index", 0),
