@@ -6,7 +6,24 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Lazy-load client to avoid errors if OPENAI_API_KEY not set
+_client = None
+
+def get_openai_client():
+    """Get or create OpenAI client with lazy initialization."""
+    global _client
+    if _client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            logger.warning("OPENAI_API_KEY not set - evaluation will fail gracefully")
+            return None
+        try:
+            _client = OpenAI(api_key=api_key)
+            logger.info("OpenAI client initialized")
+        except Exception as e:
+            logger.error(f"Failed to initialize OpenAI client: {e}")
+            return None
+    return _client
 
 async def evaluate_context_relevance(query: str, chunk: str) -> Dict:
     """
@@ -33,6 +50,15 @@ Respond in JSON format with:
 - key_matches: list of 2-3 specific matching concepts"""
 
     try:
+        client = get_openai_client()
+        if not client:
+            logger.warning("OpenAI client unavailable - returning default evaluation")
+            return {
+                "score": 3,
+                "reasoning": "Evaluation unavailable - OpenAI API not configured",
+                "key_matches": []
+            }
+        
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],

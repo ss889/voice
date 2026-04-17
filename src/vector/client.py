@@ -101,14 +101,19 @@ class VectorStore:
             return {}
     
     def delete_by_source(self, source: str) -> bool:
-        """Delete all vectors from a specific source."""
+        """Delete all vectors from a specific source file."""
         try:
+            from qdrant_client.models import FieldCondition, MatchValue
+            
             self.client.delete(
                 collection_name=self.collection_name,
                 points_selector=self.client.models.FilterSelector(
                     filter=self.client.models.Filter(
                         must=[
-                            self.client.models.HasIdCondition(has_id=[])
+                            FieldCondition(
+                                key="source",
+                                match=MatchValue(value=source)
+                            )
                         ]
                     )
                 ),
@@ -116,7 +121,7 @@ class VectorStore:
             logger.info(f"Deleted vectors from source: {source}")
             return True
         except Exception as e:
-            logger.error(f"Error deleting by source: {e}")
+            logger.error(f"Error deleting by source '{source}': {e}")
             return False
     
     def clear(self):

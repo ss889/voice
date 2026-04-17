@@ -6,6 +6,7 @@ from .chunker import chunk_text
 from ..vector.embeddings import embed_batch
 from ..vector.client import VectorStore
 from ..config.settings import settings
+from ..exceptions import DocumentProcessingError, EmbeddingError
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +20,15 @@ class DocumentLoader:
             file_path = str(file_path)
             logger.info(f"Loading document: {file_path}")
             
+            # Verify file exists
+            if not Path(file_path).exists():
+                raise DocumentProcessingError(f"File not found: {file_path}")
+            
             # Parse document
             pages = parse_document(file_path)
             logger.info(f"Parsed {len(pages)} pages")
             if not pages:
-                logger.warning(f"No content parsed from {file_path}")
-                return {"status": "error", "message": "Failed to parse document"}
+                raise DocumentProcessingError("Document is empty or could not be parsed")
             
             total_chunks = 0
             source_name = Path(file_path).name
@@ -54,22 +58,23 @@ class DocumentLoader:
                 logger.info(f"Got {len(embeddings) if embeddings else 0} embeddings")
                 
                 if not embeddings or len(embeddings) == 0:
-                    logger.error(f"No embeddings generated for {source_name}")
-                    continue
+                    raise EmbeddingError(f"Failed to generate embeddings for {source_name}")
                     
                 if len(embeddings) != len(chunks):
-                    logger.error(f"Embedding count mismatch for {source_name}: expected {len(chunks)}, got {len(embeddings)}")
-                    continue
+                    raise EmbeddingError(f"Embedding count mismatch for {source_name}: expected {len(chunks)}, got {len(embeddings)}")
                 
-                # Prepare payloads (without text for storage efficiency)
+                # Prepare payloads
                 payloads = []
                 for chunk in chunks:
                     payload = {k: v for k, v in chunk.items() if k != "text"}
-                    payload["text"] = chunk["text"]  # Keep text for retrieval
+                    payload["text"] = chunk["text"]
                     payloads.append(payload)
                 
                 # Upsert to vector store
-                self.vector_store.upsert(embeddings, payloads)
+                success = self.vector_store.upsert(embeddings, payloads)
+                if not success:
+                    raise DocumentProcessingError(f"Failed to store vectors for {source_name}")
+                
                 total_chunks += len(chunks)
             
             logger.info(f"Successfully loaded {source_name} with {total_chunks} chunks")
@@ -79,9 +84,16 @@ class DocumentLoader:
                 "chunks_indexed": total_chunks,
                 "pages_processed": len(pages)
             }
-        except Exception as e:
-            logger.error(f"Error loading document: {e}", exc_info=True)
+        
+        except (DocumentProcessingError, EmbeddingError) as e:
+            logger.error(f"Processing error: {e}")
             return {"status": "error", "message": str(e)}
+        except FileNotFoundError as e:
+            logger.error(f"File not found: {e}")
+            return {"status": "error", "message": f"File not found"}
+        except Exception as e:
+            logger.exception(f"Unexpected error loading document: {e}")
+            return {"status": "error", "message": "Internal error during document processing"}
     
     def load_directory(self, directory: str) -> List[Dict]:
         """Load all documents from a directory."""

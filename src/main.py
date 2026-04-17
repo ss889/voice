@@ -1,7 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import os
 import tempfile
 import logging
@@ -29,11 +29,11 @@ SUPPORTED_EXTENSIONS = {".pdf", ".txt"}
 # Pydantic models
 class QueryRequest(BaseModel):
     query: str
-    k: int = 5
+    k: int = Field(default=5, ge=1, le=100, description="Number of results to return (1-100)")
 
 class EvaluateRequest(BaseModel):
     query: str
-    k: int = 5
+    k: int = Field(default=5, ge=1, le=100, description="Number of results to evaluate (1-100)")
 
 # Initialize FastAPI app
 app = FastAPI(title="DocQuery - Semantic Document Search")
@@ -130,9 +130,6 @@ async def query_documents(request: QueryRequest):
         if not request.query.strip():
             raise InvalidDocumentError("Query cannot be empty")
         
-        if request.k < 1 or request.k > 100:
-            raise InvalidDocumentError("k must be between 1 and 100")
-        
         result = container.rag_search.search(request.query, k=request.k)
         return JSONResponse(content=result)
     
@@ -171,7 +168,19 @@ async def evaluate_retrieval(request: EvaluateRequest):
         
         # Extract chunk texts and evaluate
         chunks = [result["text"] for result in results]
-        evaluation = evaluate_batch(request.query, chunks)
+        try:
+            evaluation = evaluate_batch(request.query, chunks)
+        except Exception as e:
+            logger.warning(f"Evaluation failed: {e} - returning results without scores")
+            # Return results without evaluation scores if evaluation fails
+            return JSONResponse(content={
+                "query": request.query,
+                "results": results,
+                "average_relevance_score": 0,
+                "retrieval_time_ms": search_result.get("retrieval_time_ms", 0),
+                "num_results": len(results),
+                "evaluation_error": "Evaluation service unavailable"
+            })
         
         # Combine results with evaluations
         for i, result in enumerate(results):
