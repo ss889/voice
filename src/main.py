@@ -1,6 +1,7 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Body
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import os
 import tempfile
 import logging
@@ -15,6 +16,15 @@ from src.vector import embeddings as embeddings_module
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Pydantic models for request bodies
+class QueryRequest(BaseModel):
+    query: str
+    k: int = 5
+
+class EvaluateRequest(BaseModel):
+    query: str
+    k: int = 5
 
 # Initialize components
 vector_store = None
@@ -88,32 +98,32 @@ async def ingest_document(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/query")
-async def query_documents(query: str, k: int = 5):
+async def query_documents(request: QueryRequest):
     """Query the document collection."""
     if not rag_search:
         raise HTTPException(status_code=503, detail="RAG search not initialized")
     
     try:
-        result = rag_search.search(query, k=k)
+        result = rag_search.search(request.query, k=request.k)
         return JSONResponse(content=result)
     except Exception as e:
         logger.error(f"Error in query: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/evaluate")
-async def evaluate_retrieval(query: str, k: int = 5):
+async def evaluate_retrieval(request: EvaluateRequest):
     """Evaluate retrieval quality for a query."""
     if not rag_search:
         raise HTTPException(status_code=503, detail="RAG search not initialized")
     
     try:
         # Get search results
-        search_result = rag_search.search(query, k=k)
+        search_result = rag_search.search(request.query, k=request.k)
         results = search_result.get("results", [])
         
         if not results:
             return JSONResponse(content={
-                "query": query,
+                "query": request.query,
                 "message": "No results found to evaluate",
                 "average_score": 0
             })
@@ -122,7 +132,7 @@ async def evaluate_retrieval(query: str, k: int = 5):
         chunks = [result["text"] for result in results]
         
         # Evaluate
-        evaluation = evaluate_batch(query, chunks)
+        evaluation = evaluate_batch(request.query, chunks)
         
         # Combine with search results
         for i, result in enumerate(results):
@@ -130,7 +140,7 @@ async def evaluate_retrieval(query: str, k: int = 5):
                 result["evaluation"] = evaluation["evaluations"][i]
         
         return JSONResponse(content={
-            "query": query,
+            "query": request.query,
             "results": results,
             "average_relevance_score": evaluation["average_score"],
             "retrieval_time_ms": search_result.get("retrieval_time_ms", 0)
