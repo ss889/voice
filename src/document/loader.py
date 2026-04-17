@@ -21,6 +21,7 @@ class DocumentLoader:
             
             # Parse document
             pages = parse_document(file_path)
+            logger.info(f"Parsed {len(pages)} pages")
             if not pages:
                 logger.warning(f"No content parsed from {file_path}")
                 return {"status": "error", "message": "Failed to parse document"}
@@ -29,9 +30,10 @@ class DocumentLoader:
             source_name = Path(file_path).name
             
             # Process each page
-            for page_data in pages:
+            for page_idx, page_data in enumerate(pages):
                 page_num = page_data.get("page_num", 1)
                 text = page_data.get("text", "")
+                logger.info(f"Page {page_idx+1}: {len(text)} characters")
                 
                 # Chunk the text
                 metadata = {
@@ -39,16 +41,20 @@ class DocumentLoader:
                     "page_num": page_num,
                 }
                 chunks = chunk_text(text, metadata, settings.CHUNK_SIZE, settings.CHUNK_OVERLAP)
+                logger.info(f"Created {len(chunks)} chunks from page {page_idx+1}")
                 
                 if not chunks:
+                    logger.warning(f"No chunks created for page {page_idx+1}")
                     continue
                 
                 # Embed chunks
                 chunk_texts = [chunk["text"] for chunk in chunks]
+                logger.info(f"Embedding {len(chunk_texts)} chunks...")
                 embeddings = embed_batch(chunk_texts, settings.EMBEDDING_MODEL)
+                logger.info(f"Got {len(embeddings) if embeddings else 0} embeddings")
                 
                 if not embeddings or len(embeddings) != len(chunks):
-                    logger.error(f"Embedding count mismatch for {source_name}")
+                    logger.error(f"Embedding count mismatch for {source_name}: expected {len(chunks)}, got {len(embeddings) if embeddings else 0}")
                     continue
                 
                 # Prepare payloads (without text for storage efficiency)
@@ -70,7 +76,7 @@ class DocumentLoader:
                 "pages_processed": len(pages)
             }
         except Exception as e:
-            logger.error(f"Error loading document: {e}")
+            logger.error(f"Error loading document: {e}", exc_info=True)
             return {"status": "error", "message": str(e)}
     
     def load_directory(self, directory: str) -> List[Dict]:
